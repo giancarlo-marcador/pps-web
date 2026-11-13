@@ -252,7 +252,17 @@
     frame.style.width = fw + "px"; frame.style.height = fw * 9 / 16 + "px";
   }
   function mount(slide) {
-    if (slide.firstChild || !slide.dataset.yt) return;
+    if (slide.firstChild) return;
+    if (slide.dataset.video && !slide.dataset.failed) {
+      // Archivo propio; si no está disponible, cae al video incrustado.
+      var v = document.createElement("video");
+      v.muted = true; v.loop = true; v.autoplay = true; v.playsInline = true; v.preload = "auto";
+      v.setAttribute("muted", ""); v.setAttribute("playsinline", "");
+      v.addEventListener("error", function () { slide.dataset.failed = "1"; slide.textContent = ""; mount(slide); });
+      v.src = slide.dataset.video; slide.appendChild(v);
+      return;
+    }
+    if (!slide.dataset.yt) return;
     var id = slide.dataset.yt, f = document.createElement("iframe");
     f.src = "https://www.youtube-nocookie.com/embed/" + id + "?autoplay=1&mute=1&loop=1&playlist=" + id + "&controls=0&playsinline=1&rel=0&disablekb=1&iv_load_policy=3&modestbranding=1";
     f.allow = "autoplay; encrypted-media"; f.title = "Video de fondo"; f.tabIndex = -1;
@@ -261,7 +271,8 @@
   function show(n) {
     i = (n + slides.length) % slides.length;
     slides.forEach(function (s, k) { s.classList.toggle("is-on", k === i); });
-    var hold = +slides[i].dataset.hold || 7000, isVideo = !!slides[i].dataset.yt;
+    var hold = +slides[i].dataset.hold || 7000, isVideo = !!(slides[i].dataset.yt || slides[i].dataset.video);
+    var vid = slides[i].querySelector("video"); if (vid) { try { vid.currentTime = 0; vid.play(); } catch (e) {} }
     dots.forEach(function (d, k) { d.classList.remove("is-on"); d.style.setProperty("--hold", hold + "ms"); if (k === i) { void d.offsetWidth; d.classList.add("is-on"); } });
     hero.classList.toggle("is-video", isVideo);
     if (tag) tag.hidden = !isVideo;

@@ -553,3 +553,4 @@ table { width: 100%; border-collapse: collapse; }
 .hero__media::after { z-index: 1; transition: opacity 1.2s var(--ease-out); }
 .hero.is-video .hero__media::after { opacity: .78; }
 .hero__dot i { height: 4px; background: rgba(255, 255, 255, .45); }
+.hero__slide video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
