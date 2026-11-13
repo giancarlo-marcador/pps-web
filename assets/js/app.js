@@ -234,3 +234,42 @@
   });
   $("#booking-edit").addEventListener("click", function () { stepDone.hidden = true; stepForm.hidden = false; });
 })();
+
+
+/* Portada: carrusel foto + video de fondo */
+(function () {
+  var hero = document.querySelector(".hero"); if (!hero) return;
+  var slides = [].slice.call(hero.querySelectorAll("[data-slide]"));
+  var dots = [].slice.call(hero.querySelectorAll(".hero__dot"));
+  var tag = document.getElementById("hero-tag");
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (slides.length < 2 || reduce) { var pg = document.getElementById("hero-pager"); if (pg) pg.hidden = true; return; }
+  var i = 0, timer = null;
+
+  function fit(frame) {
+    var w = hero.offsetWidth, h = hero.offsetHeight, k = 1.18; // el 18 % extra oculta los rótulos del reproductor
+    var fw = Math.max(w, h * 16 / 9) * k;
+    frame.style.width = fw + "px"; frame.style.height = fw * 9 / 16 + "px";
+  }
+  function mount(slide) {
+    if (slide.firstChild || !slide.dataset.yt) return;
+    var id = slide.dataset.yt, f = document.createElement("iframe");
+    f.src = "https://www.youtube-nocookie.com/embed/" + id + "?autoplay=1&mute=1&loop=1&playlist=" + id + "&controls=0&playsinline=1&rel=0&disablekb=1&iv_load_policy=3&modestbranding=1";
+    f.allow = "autoplay; encrypted-media"; f.title = "Video de fondo"; f.tabIndex = -1;
+    fit(f); slide.appendChild(f);
+  }
+  function show(n) {
+    i = (n + slides.length) % slides.length;
+    slides.forEach(function (s, k) { s.classList.toggle("is-on", k === i); });
+    var hold = +slides[i].dataset.hold || 7000, isVideo = !!slides[i].dataset.yt;
+    dots.forEach(function (d, k) { d.classList.remove("is-on"); d.style.setProperty("--hold", hold + "ms"); if (k === i) { void d.offsetWidth; d.classList.add("is-on"); } });
+    hero.classList.toggle("is-video", isVideo);
+    if (tag) tag.hidden = !isVideo;
+    clearTimeout(timer); timer = setTimeout(function () { show(i + 1); }, hold);
+  }
+  dots.forEach(function (d, k) { d.addEventListener("click", function () { slides.forEach(mount); show(k); }); });
+  window.addEventListener("resize", function () { slides.forEach(function (s) { if (s.firstChild && s.firstChild.tagName === "IFRAME") fit(s.firstChild); }); });
+  window.addEventListener("load", function () { setTimeout(function () { slides.forEach(mount); }, 1200); });
+  dots[0].style.setProperty("--hold", (+slides[0].dataset.hold || 7000) + "ms");
+  timer = setTimeout(function () { show(1); }, +slides[0].dataset.hold || 7000);
+})();

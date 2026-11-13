@@ -62,7 +62,16 @@
 <!-- ============ HERO ============ -->
 <section class="hero" id="inicio">
   <div class="hero__media" aria-hidden="true">
-    <img src="assets/img/hero-soldador.webp" alt="" width="1600" height="600" fetchpriority="high">
+    <div class="hero__slide is-on" data-slide data-hold="7000">
+      <img src="assets/img/hero-soldador.webp" alt="" width="1600" height="600" fetchpriority="high">
+    </div>
+    <!-- VIDEO DE REFERENCIA (YouTube, canal engineeringdoses). Reemplazar por video propio de PPS antes de publicar. -->
+    <div class="hero__slide hero__slide--video" data-slide data-hold="17000" data-yt="DJeA3ATBVeE"></div>
+  </div>
+  <div class="hero__pager" id="hero-pager">
+    <span class="hero__tag" id="hero-tag" hidden>Video de referencia · se reemplaza por tomas de PPS</span>
+    <button type="button" class="hero__dot is-on" aria-label="Ver foto de planta"><i></i></button>
+    <button type="button" class="hero__dot" aria-label="Ver video"><i></i></button>
   </div>
   <div class="hero__grid" aria-hidden="true"></div>
 
